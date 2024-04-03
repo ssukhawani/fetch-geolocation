@@ -3,7 +3,7 @@ const puppeteer = require('puppeteer');
 
 const app = express();
 
-app.get('/api/geo_ip', async (req, res) => {
+app.get('/get_ip', async (req, res) => {
   const browser = await puppeteer.launch();
   try {
     const page = await browser.newPage();
