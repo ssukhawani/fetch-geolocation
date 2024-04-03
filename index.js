@@ -12,8 +12,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.get('/api/geo_ip', async (req, res) => {
+  const browser = await puppeteer.launch();
   try {
-    const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
     const apiEndpoints = [
