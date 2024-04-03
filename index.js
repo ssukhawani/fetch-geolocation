@@ -14,7 +14,7 @@ if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
 
 // Allow requests from specific domain(s)
 const corsOptions = {
-  origin: process.env.HOST, // Replace with your actual domain
+  origin: process.env.HOST || 'mylinkgenie.com',
 };
 
 app.use(cors(corsOptions));
