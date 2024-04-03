@@ -71,7 +71,7 @@ app.get('/api/geo_ip', async (req, res) => {
   }
 });
 
-app.listen(process.env.PORT || 3002, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log("Server started");
 });
 
