@@ -30,10 +30,23 @@ app.get('/api/geo_ip', async (req, res) => {
       headless: true,
       ignoreHTTPSErrors: true,
     };
+  }else{
+    options = {
+      args: [
+        "--disable-setuid-sandbox",
+        "--no-sandbox",
+        "--single-process",
+        "--no-zygote",
+      ],
+      executablePath:
+        process.env.NODE_ENV === "production"
+          ? process.env.PUPPETEER_EXECUTABLE_PATH
+          : puppeteer.executablePath(),
+    }
   }
 
+  const browser = await puppeteer.launch(options);
   try {
-    const browser = await puppeteer.launch(options);
     const page = await browser.newPage();
 
     const apiEndpoints = [
@@ -61,19 +74,18 @@ app.get('/api/geo_ip', async (req, res) => {
 
       combinedResponse[key] = response;
     }
-
-    await browser.close();
     
     res.json(combinedResponse);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
+  } finally {
+    await browser.close();
   }
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Server started");
+const PORT = process.env.PORT || 4000;
+
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
 });
-
-
-module.exports = app;
