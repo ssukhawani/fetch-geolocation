@@ -1,15 +1,7 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
-const cors = require('cors');
 
 const app = express();
-
-// Allow requests from specific domain(s)
-const corsOptions = {
-  origin: process.env.HOST || 'http://localhost:3002', // Replace with your actual domain
-};
-
-app.use(cors(corsOptions));
 
 app.get('/api/geo_ip', async (req, res) => {
   const browser = await puppeteer.launch();
