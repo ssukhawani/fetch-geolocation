@@ -1,39 +1,19 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
 const cors = require('cors');
-<<<<<<< HEAD
-const app = require("express")();
-const puppeteer = require("puppeteer");
-
-// Allow requests from specific domain(s)
-const corsOptions = {
-  origin: process.env.HOST || 'mylinkgenie.com',
-=======
 
 const app = express();
 
 // Allow requests from specific domain(s)
 const corsOptions = {
   origin: process.env.HOST || 'http://localhost:3002', // Replace with your actual domain
->>>>>>> fc145414a6f965e23deb26e4a2c30203565e1eaa
 };
 
 app.use(cors(corsOptions));
 
 app.get('/api/geo_ip', async (req, res) => {
-<<<<<<< HEAD
-  const browser = await puppeteer.launch({
-    headless: true,
-    executablePath: "/usr/bin/chromium-browser",
-    args: ["--no-sandbox", "--disable-gpu"],
-  });
-  
-  console.log("Opening the browser...");
-  try {
-=======
   try {
     const browser = await puppeteer.launch();
->>>>>>> fc145414a6f965e23deb26e4a2c30203565e1eaa
     const page = await browser.newPage();
 
     const apiEndpoints = [
