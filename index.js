@@ -1,39 +1,19 @@
+const express = require('express');
+const puppeteer = require('puppeteer');
 const cors = require('cors');
 
-const app = require("express")();
-
-let chrome = {};
-let puppeteer;
-
-if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-  chrome = require("chrome-aws-lambda");
-  puppeteer = require("puppeteer-core");
-} else {
-  puppeteer = require("puppeteer");
-}
+const app = express();
 
 // Allow requests from specific domain(s)
 const corsOptions = {
-  origin: process.env.HOST, // Replace with your actual domain
+  origin: process.env.HOST || 'http://localhost:3002', // Replace with your actual domain
 };
 
 app.use(cors(corsOptions));
 
 app.get('/api/geo_ip', async (req, res) => {
-  let options = {};
-
-  if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-    options = {
-      args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"],
-      defaultViewport: chrome.defaultViewport,
-      executablePath: await chrome.executablePath,
-      headless: true,
-      ignoreHTTPSErrors: true,
-    };
-  }
-
   try {
-    const browser = await puppeteer.launch(options);
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
     const apiEndpoints = [
@@ -71,9 +51,10 @@ app.get('/api/geo_ip', async (req, res) => {
   }
 });
 
-app.listen(process.env.PORT || 3002, () => {
-  console.log("Server started");
+const port = process.env.PORT || 3002;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
 
 
-module.exports = app;
+
