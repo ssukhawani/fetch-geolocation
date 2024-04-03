@@ -1,11 +1,24 @@
-FROM ghcr.io/puppeteer/puppeteer:19.7.2
+FROM node:lts-alpine
 
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+WORKDIR /app
 
-WORKDIR /usr/src/app
+RUN apk update && apk add --no-cache nmap && \
+    echo @edge https://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
+    echo @edge https://dl-cdn.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
+    apk update && \
+    apk add --no-cache \
+      chromium \
+      harfbuzz \
+      "freetype>2.8" \
+      ttf-freefont \
+      nss
 
-COPY package*.json ./
-RUN npm ci
-COPY . .
-CMD [ "node", "index.js" ]
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+
+COPY . /app
+
+RUN npm install
+
+EXPOSE 3000
+
+CMD ["npm", "start"]

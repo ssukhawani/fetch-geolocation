@@ -1,16 +1,6 @@
 const cors = require('cors');
-
 const app = require("express")();
-
-let chrome = {};
-let puppeteer;
-
-if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-  chrome = require("chrome-aws-lambda");
-  puppeteer = require("puppeteer-core");
-} else {
-  puppeteer = require("puppeteer");
-}
+const puppeteer = require("puppeteer");
 
 // Allow requests from specific domain(s)
 const corsOptions = {
@@ -20,32 +10,13 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.get('/api/geo_ip', async (req, res) => {
-  let options = {};
-
-  if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-    options = {
-      args: [...chrome.args, "--hide-scrollbars", "--disable-web-security"],
-      defaultViewport: chrome.defaultViewport,
-      executablePath: await chrome.executablePath,
-      headless: true,
-      ignoreHTTPSErrors: true,
-    };
-  }else{
-    options = {
-      args: [
-        "--disable-setuid-sandbox",
-        "--no-sandbox",
-        "--single-process",
-        "--no-zygote",
-      ],
-      executablePath:
-        process.env.NODE_ENV === "production"
-          ? process.env.PUPPETEER_EXECUTABLE_PATH
-          : puppeteer.executablePath(),
-    }
-  }
-
-  const browser = await puppeteer.launch(options);
+  const browser = await puppeteer.launch({
+    headless: true,
+    executablePath: "/usr/bin/chromium-browser",
+    args: ["--no-sandbox", "--disable-gpu"],
+  });
+  
+  console.log("Opening the browser...");
   try {
     const page = await browser.newPage();
 
@@ -89,3 +60,5 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });
+
+module.exports = app;
